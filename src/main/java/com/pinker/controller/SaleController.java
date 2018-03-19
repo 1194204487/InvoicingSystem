@@ -33,11 +33,14 @@ public class SaleController {
         return "/addSale";
     }
 
+
+
+
     @RequestMapping("/addSale")
     public String addSale( HttpSession session,Sale sale,Model model){
         User user= (User) session.getAttribute("user");
         saleService.sale(sale.getProductid(),sale.getQuantity(),user,sale.getPrice());
-        model.addAttribute("msg","添加销售成功");
+        model.addAttribute("msg","添加的规定风格的销售成功");
         return "/addSale";
     }
 
