@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pinker.mapper.SaleMapper">
+
+    <resultMap id="SaleMap" type="SaleCustom">
+
+        <association property="product" column="productid" select="com.pinker.mapper.ProductMapper.findProduct"></association>
+        <association property="user" column="userid" select="com.pinker.mapper.UserMapper.findById"></association>
+
+    </resultMap>
+
+
+    <insert id="insertSale" parameterType="Sale">
+        INSERT INTO sale
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="price!=null and price!=''">
+                price,
+            </if>
+            <if test="quantity!=null and quantity!=''">
+                quantity,
+            </if>
+            <if test="totalprice!=null and totalprice!=''">
+                totalprice,
+            </if>
+            <if test="saledate!=null">
+                saledate,
+            </if>
+            <if test="userid!=null and userid!=''">
+                userid,
+            </if>
+            <if test="productid!=null and productid!=''">
+                productid,
+            </if>
+        </trim>
+
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="price!=null and price!=''">
+                #{price},
+            </if>
+            <if test="quantity!=null and quantity!=''">
+                #{quantity},
+            </if>
+            <if test="totalprice!=null and totalprice!=''">
+                #{totalprice},
+            </if>
+            <if test="saledate!=null">
+               #{saledate} ,
+            </if>
+            <if test="userid!=null and userid!=''">
+                #{userid},
+            </if>
+            <if test="productid!=null and productid!=''">
+                #{productid},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getSaleList" parameterType="Sale" resultMap="SaleMap">
+        SELECT * FROM sale
+        <where>
+            <if test="userid!=null and userid!=''">
+                userid=#{userid}
+            </if>
+            <if test="productid!=null and product!=''">
+                and productid=#{id}
+            </if>
+        </where>
+
+    </select>
+</mapper>

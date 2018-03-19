@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+    <!--涉资请求，响应字符编码为UTF-8（无法解决json乱码，）-->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!--随服务器启动加载spring配置文件-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <!--spring配置文件-->
+        <param-value>classpath:spring/applicationContext-*.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+
+    <!--springmvc的-->
+    <servlet>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <!--springmvc配文件-->
+            <param-value>classpath:spring/spring-mvc.xml</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <!--  1、拦截*.do、*.htm， 例如：/user/add.do
+　　          这是最传统的方式，最简单也最实用。不会导致静态文件（jpg,js,css）被拦截。
+　　          2、拦截/，例如：/user/add
+　　          可以实现现在很流行的REST风格。很多互联网类型的应用很喜欢这种风格的URL。
+　　          弊端：会导致静态文件（jpg,js,css）被拦截后不能正常显示。配置default-servlet-handler可以解决静态文件问题
+　　          3、拦截/*，这是一个错误的方式，请求可以走到Action中，但转到jsp时再次被拦截，不能访问到jsp。-->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+
+
+<!--当使用RESTful风格时，将PUT，DELETE方法欺骗controller为POST方法
+需要配置filter 并且重写RequestWrapper
+-->
+<!--
+    <filter>
+        <filter-name>RestfulMethodFilter</filter-name>
+        <filter-class>com.pinker.filter.RestfulMethodFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>RestfulMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>-->
+
+
+    <!--实现RESTful风格，使用hidden域修改提交的method-->
+    <filter>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HiddenHttpMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+</web-app>
